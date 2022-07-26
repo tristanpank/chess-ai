@@ -7,3 +7,9 @@ def player(board):
     elif board.turn == True:
         return "w"
 
+def actions(board):
+    total_actions = []
+    for move in board.legal_moves:
+        total_actions.append(move)
+    return total_actions
+
