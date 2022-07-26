@@ -1,22 +1,21 @@
 import chess
 board = chess.Board()
 
+from chessai import player
+
+
 # Getting AI chess color
 while True:
     ai_color = input("AI Color (w or b): ").lower()
-    if ai_color == "w":
-        ai_color = True
-        break
-    elif ai_color == "b":
-        ai_color = False
+    if ai_color == "w" or ai_color == "b":
         break
 
 while board.is_checkmate() == False:
     print(board)
-    if board.turn == ai_color:
+    if player(board) == ai_color:
         # AI move function will go here
         # Be careful will cause infinite loop for now
-        continue
+        break
     else:
         while True:
             human_move = input("Move: ")
