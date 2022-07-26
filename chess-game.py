@@ -1,7 +1,7 @@
 import chess
 board = chess.Board()
 
-from chessai import player
+from chessai import player, actions, result, evaluation
 
 
 # Getting AI chess color
