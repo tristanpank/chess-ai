@@ -1,4 +1,6 @@
 import chess
+import time
+
 board = chess.Board()
 
 from chessai import player, actions, result, evaluation, minimax, max_value, min_value
@@ -14,10 +16,12 @@ while board.is_checkmate() == False:
     print()
     print(board)
     if player(board) == ai_color:
-        # AI move function will go here
-        # Be careful will cause infinite loop for now
+        start_time = time.time()
         move = minimax(board, 3)
         board.push(move)
+        end_time = time.time()
+        total_time = round(end_time - start_time, 2)
+        print("Time: " + str((total_time)))
     else:
         while True:
             human_move = input("Move: ")
@@ -26,4 +30,6 @@ while board.is_checkmate() == False:
             except:
                 continue
             break
-        
+
+print("Checkmate")
+print(board)

@@ -61,6 +61,7 @@ kingstable = [
     -30, -40, -40, -50, -50, -40, -40, -30,
     -30, -40, -40, -50, -50, -40, -40, -30]
 
+num_actions = 0
 
 def player(board):
     if board.turn == False:
@@ -146,6 +147,8 @@ def evaluation(board):
         return -score
 
 def minimax(board, depth):
+    global num_actions
+    num_actions = 0
     if depth == 0:
         return
     alpha = -10000
@@ -161,22 +164,37 @@ def minimax(board, depth):
     for action in action_values[1:]:
         if action[-1] > curr_max[-1]:
             curr_max = action
+    print()
+    print(curr_max)
+    print(f"Moves Searched: {num_actions}")
     return curr_max[0]
 
-def max_value(board, depth, alpha, beta):
+def max_value(board, depth, alpha, beta, depth_set=False):
+    global num_actions
     if depth == 0:
         return evaluation(board)
     for action in actions(board):
-        alpha = max(alpha, min_value(result(board, action), depth-1, alpha, beta))
+        # print(action)
+        num_actions += 1
+        if board.is_capture(action) and depth_set == False:
+            depth = 2
+            depth_set = True
+        alpha = max(alpha, min_value(result(board, action), depth-1, alpha, beta, depth_set))
         if beta <= alpha:
             return alpha
     return alpha
 
-def min_value(board, depth, alpha, beta):
+def min_value(board, depth, alpha, beta, depth_set=False):
+    global num_actions
     if depth == 0:
         return evaluation(board)
     for action in actions(board):
-        beta = min(beta, max_value(result(board, action), depth-1, alpha, beta))
+    #     print(action)
+        num_actions += 1
+        if board.is_capture(action) and depth_set == False:
+            depth = 2
+            depth_set = True
+        beta = min(beta, max_value(result(board, action), depth-1, alpha, beta, depth_set))
         if beta <= alpha:
             return beta
     return beta
