@@ -141,10 +141,12 @@ def evaluation(board):
     # combines total_piece and positional scores
     score = material + pawnsq + knightsq + bishopsq + rooksq + queensq + kingsq
 
-    if board.turn:
-        return score
-    else:
-        return -score
+    # if board.turn:
+    #     return score
+    # else:
+    #     return -score
+
+    return score
 
 def minimax(board, depth):
     global num_actions
@@ -157,17 +159,32 @@ def minimax(board, depth):
     curr_player = player(board)
     total_actions = actions(board)
     action_values = []
-    for action in total_actions:
-        action_values.append((action, max_value(result(board, action), depth, alpha, beta)))
-    print(action_values)
-    curr_max = action_values[0]
-    for action in action_values[1:]:
-        if action[-1] > curr_max[-1]:
-            curr_max = action
-    print()
-    print(curr_max)
-    print(f"Moves Searched: {num_actions}")
-    return curr_max[0]
+    
+    if board.turn:
+        for action in total_actions:
+            action_values.append((action, min_value(result(board, action), depth, alpha, beta)))
+        print(action_values)
+        curr_max = action_values[0]
+        for action in action_values[1:]:
+            if action[-1] > curr_max[-1]:
+                curr_max = action
+        print()
+        print(curr_max)
+        print(f"Moves Searched: {num_actions}")
+        return curr_max[0]
+
+    else:
+        for action in total_actions:
+            action_values.append((action, max_value(result(board, action), depth, alpha, beta)))
+        print(action_values)
+        curr_min = action_values[0]
+        for action in action_values[1:]:
+            if action[-1] < curr_min[-1]:
+                curr_min = action
+        print()
+        print(curr_min)
+        print(f"Moves Searched: {num_actions}")
+        return curr_min[0]
 
 def max_value(board, depth, alpha, beta, depth_set=False):
     global num_actions
