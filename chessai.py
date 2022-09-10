@@ -1,4 +1,5 @@
 import chess
+import chess.polyglot
 board = chess.Board()
 
 pawntable = [
@@ -149,46 +150,52 @@ def evaluation(board):
     return score
 
 def minimax(board, depth):
-    global num_actions
-    num_actions = 0
-    if depth == 0:
-        return
-    alpha = -10000
-    beta = 10000
-    best_value = -99999
-    curr_player = player(board)
-    total_actions = actions(board)
-    action_values = []
-    
-    if board.turn:
-        for action in total_actions:
-            action_values.append((action, min_value(result(board, action), depth, alpha, beta)))
-        print(action_values)
-        curr_max = action_values[0]
-        for action in action_values[1:]:
-            if action[-1] > curr_max[-1]:
-                curr_max = action
-        print()
-        print(curr_max)
-        print(f"Moves Searched: {num_actions}")
-        return curr_max[0]
+    try:
+        move = chess.polyglot.MemoryMappedReader(r"C:\Users\trist\repos\Chess-World\books\human.bin").weighted_choice(board).move
+        print(move)
+        return move
+    except:
+        global num_actions
+        num_actions = 0
+        if depth == 0:
+            return
+        alpha = -10000
+        beta = 10000
+        best_value = -99999
+        curr_player = player(board)
+        total_actions = actions(board)
+        action_values = []
+        
+        if board.turn:
+            for action in total_actions:
+                action_values.append((action, min_value(result(board, action), depth, alpha, beta)))
+            print(action_values)
+            curr_max = action_values[0]
+            for action in action_values[1:]:
+                if action[-1] > curr_max[-1]:
+                    curr_max = action
+            print()
+            print(curr_max)
+            print(f"Moves Searched: {num_actions}")
+            return curr_max[0]
 
-    else:
-        for action in total_actions:
-            action_values.append((action, max_value(result(board, action), depth, alpha, beta)))
-        print(action_values)
-        curr_min = action_values[0]
-        for action in action_values[1:]:
-            if action[-1] < curr_min[-1]:
-                curr_min = action
-        print()
-        print(curr_min)
-        print(f"Moves Searched: {num_actions}")
-        return curr_min[0]
+        else:
+            for action in total_actions:
+                action_values.append((action, max_value(result(board, action), depth, alpha, beta)))
+            print(action_values)
+            curr_min = action_values[0]
+            for action in action_values[1:]:
+                if action[-1] < curr_min[-1]:
+                    curr_min = action
+            print()
+            print(curr_min)
+            print(f"Moves Searched: {num_actions}")
+            return curr_min[0]
 
 def max_value(board, depth, alpha, beta, depth_set=False):
     global num_actions
     if depth == 0:
+        score = evaluation(board)
         return evaluation(board)
     for action in actions(board):
         # print(action)
@@ -197,6 +204,7 @@ def max_value(board, depth, alpha, beta, depth_set=False):
             depth = 2
             depth_set = True
         alpha = max(alpha, min_value(result(board, action), depth-1, alpha, beta, depth_set))
+        # depth_set = False
         if beta <= alpha:
             return alpha
     return alpha
@@ -212,6 +220,7 @@ def min_value(board, depth, alpha, beta, depth_set=False):
             depth = 2
             depth_set = True
         beta = min(beta, max_value(result(board, action), depth-1, alpha, beta, depth_set))
+        # depth_set = False
         if beta <= alpha:
             return beta
     return beta
